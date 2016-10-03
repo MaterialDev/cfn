@@ -9,12 +9,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Nordstrom/cfn.git"
+    "url": "git+https://github.com/MaterialDev/cfn.git"
   },
   "files": [
     "index.js",
     "LICENSE",
-    "package.json",
+    "package.json",Nordstrom
     "README.md"
   ],
   "xo": {
@@ -47,9 +47,9 @@
   "author": "Andy Day",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Nordstrom/cfn/issues"
+    "url": "https://github.com/MaterialDev/cfn/issues"
   },
-  "homepage": "https://github.com/Nordstrom/cfn#readme",
+  "homepage": "https://github.com/MaterialDev/cfn#readme",
   "dependencies": {
     "aws-sdk": "^2.4.0",
     "bluebird": "^3.4.1",
