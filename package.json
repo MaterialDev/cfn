@@ -22,7 +22,7 @@
     "rules": {
       "max-lines": [
         "warn",
-        400
+        500
       ],
       "babel/object-curly-spacing": [
         "error",
