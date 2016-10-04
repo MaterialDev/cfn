@@ -296,8 +296,8 @@ function Cfn(name, template) {
     this.delete = function (overrideName) {
         startedAt = Date.now();
         return cf.deleteStackAsync({ StackName: overrideName || name })
-            .then(function () {
-                return async ? Promise.resolve() : checkStack('delete', overrideName || name);
+            .then(function (response) {
+                return async ? Promise.resolve(response) : checkStack('delete', overrideName || name);
             });
     };
 

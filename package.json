@@ -1,6 +1,6 @@
 {
   "name": "@material-dev/cfn",
-  "version": "0.15.4",
+  "version": "0.15.5",
   "description": "Simple Cloud Formation for Node.js",
   "main": "index.js",
   "scripts": {
