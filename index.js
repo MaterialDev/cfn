@@ -21,6 +21,8 @@ var Promise = require('bluebird'),
     HttpsProxyAgent = require('https-proxy-agent'),
     validUrl = require('valid-url');
 
+AWS.config.setPromisesDependency(require('bluebird'));
+
 var fs = Promise.promisifyAll(filesystem);
 
 var PROXY = process.env.PROXY,
@@ -96,7 +98,7 @@ function Cfn(name, template) {
     }
 
     // initialize cf
-    var cf = Promise.promisifyAll(new AWS.CloudFormation(awsOpts));
+    var cf = new AWS.CloudFormation(awsOpts);
 
     name = opts.name || name;
     template = opts.template || template;
@@ -211,14 +213,14 @@ function Cfn(name, template) {
     function processCfStack(action, cfparms) {
         startedAt = Date.now();
         if (action === 'update') {
-            return cf.updateStackAsync(cfparms)
+            return cf.updateStack(cfparms).promise()
                 .catch(function (err) {
                     if (!/No updates are to be performed/.test(err)) {
                         throw err;
                     }
                 });
         }
-        return cf.createStackAsync(cfparms);
+        return cf.createStack(cfparms).promise();
     }
 
     function loadJs(path) {
@@ -277,7 +279,7 @@ function Cfn(name, template) {
     }
 
     this.stackExists = function (overrideName) {
-        return cf.describeStacksAsync({ StackName: overrideName || name })
+        return cf.describeStacks({ StackName: overrideName || name }).promise()
             .then(function (data) {
                 return _.includes(exists, data.Stacks[0].StackStatus);
             })
@@ -295,14 +297,14 @@ function Cfn(name, template) {
 
     this.delete = function (overrideName) {
         startedAt = Date.now();
-        return cf.deleteStackAsync({ StackName: overrideName || name })
+        return cf.deleteStack({ StackName: overrideName || name }).promise()
             .then(function (response) {
                 return async ? Promise.resolve(response) : checkStack('delete', overrideName || name);
             });
     };
 
     this.outputs = function () {
-        return cf.describeStacksAsync({ StackName: name })
+        return cf.describeStacks({ StackName: name }).promise()
             .then(function (data) {
                 return flow(
                     get('Stacks[0].Outputs'),
@@ -326,7 +328,7 @@ function Cfn(name, template) {
         startedAt = Date.now();
         return (function loop() {
             if (!done) {
-                return cf.listStacksAsync({
+                return cf.listStacks({
                     NextToken: next,
                     StackStatusFilter: [
                         'CREATE_COMPLETE',
@@ -336,7 +338,7 @@ function Cfn(name, template) {
                         'UPDATE_COMPLETE'
 
                     ]
-                })
+                }).promise()
                     .then(function (data) {
                         next = data.NextToken;
                         done = !next;
