@@ -271,8 +271,8 @@ function Cfn(name, template) {
                 }
                 return processCfStack(action, cfOptions);
             })
-            .then(function () {
-                return async ? Promise.resolve() : checkStack(action, name);
+            .then(function (response) {
+                return async ? Promise.resolve(response) : checkStack(action, name);
             });
     }
 
