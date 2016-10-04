@@ -1,6 +1,6 @@
 {
   "name": "@material-dev/cfn",
-  "version": "0.15.2",
+  "version": "0.15.3",
   "description": "Simple Cloud Formation for Node.js",
   "main": "index.js",
   "scripts": {
@@ -57,7 +57,8 @@
     "https-proxy-agent": "^1.0.0",
     "lodash": "^4.13.1",
     "moment": "^2.13.0",
-    "sprintf": "^0.1.5"
+    "sprintf": "^0.1.5",
+    "valid-url": "^1.0.9"
   },
   "devDependencies": {
     "blue-tape": "^0.2.0",

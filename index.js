@@ -18,7 +18,8 @@ var Promise = require('bluebird'),
     get = require('lodash/fp/get'),
     mapValues = require('lodash/fp/mapValues'),
     chalk = require('chalk'),
-    HttpsProxyAgent = require('https-proxy-agent');
+    HttpsProxyAgent = require('https-proxy-agent'),
+    validUrl = require('valid-url');
 
 var fs = Promise.promisifyAll(filesystem);
 
@@ -230,15 +231,45 @@ function Cfn(name, template) {
     }
 
     function processStack(action, name, template) {
-        return (_.endsWith(template, '.js')
-            ? loadJs(template)
-            : fs.readFileAsync(template, 'utf8'))
+        var useTemplateUrl = false;
+        return new Promise(function (resolve, reject) {
+            if (validUrl.is_web_uri(template)) {
+                useTemplateUrl = true;
+                resolve(template);
+            } else if (_.endsWith(template, '.js')) {
+                return loadJs(template)
+                    .then(function (data) {
+                        resolve(data);
+                    })
+                    .catch(function (err) {
+                        reject(err);
+                    });
+            } else {
+                return fs.readFileAsync(template, 'utf8')
+                    .then(function (data) {
+                        resolve(data);
+                    })
+                    .catch(function (err) {
+                        reject(err);
+                    });
+            }
+        })
             .then(function (data) {
-                return processCfStack(action, {
-                    StackName: name,
-                    Capabilities: capabilities,
-                    TemplateBody: data
-                });
+                var cfOptions = {};
+                if (useTemplateUrl) {
+                    cfOptions = {
+                        StackName: name,
+                        Capabilities: capabilities,
+                        TemplateURL: data
+                    };
+                } else {
+                    cfOptions = {
+                        StackName: name,
+                        Capabilities: capabilities,
+                        TemplateBody: data
+                    };
+                }
+                return processCfStack(action, cfOptions);
             })
             .then(function () {
                 return async ? Promise.resolve() : checkStack(action, name);
