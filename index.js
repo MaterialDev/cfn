@@ -236,9 +236,11 @@ function Cfn(name, template) {
         var useTemplateUrl = false;
         return new Promise(function (resolve, reject) {
             if (validUrl.is_web_uri(template)) {
+                console.log('using template deployment');
                 useTemplateUrl = true;
                 resolve(template);
             } else if (_.endsWith(template, '.js')) {
+              console.log('using js file deployment');
                 return loadJs(template)
                     .then(function (data) {
                         resolve(data);
@@ -247,6 +249,7 @@ function Cfn(name, template) {
                         reject(err);
                     });
             } else {
+              console.log('using sdk argument deployment');
                 return fs.readFileAsync(template, 'utf8')
                     .then(function (data) {
                         resolve(data);
