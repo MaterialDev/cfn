@@ -3,6 +3,9 @@
   "version": "0.15.7",
   "description": "Simple Cloud Formation for Node.js",
   "main": "index.js",
+  "engines": {
+    "node": ">6.3.0"
+  },
   "scripts": {
     "test": "node node_modules/.bin/xo",
     "tape": "node test | tap-spec"
